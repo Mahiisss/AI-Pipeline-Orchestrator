@@ -1,5 +1,3 @@
-// InputNode.js
-
 import { BaseNode } from './BaseNode';
 import { Position } from 'reactflow';
 
@@ -20,6 +18,13 @@ export const InputNode = ({ id, data }) => {
         { value: 'Text', label: 'Text' },
         { value: 'File', label: 'File' }
       ]
+    },
+    {
+      name: 'value',
+      type: 'text',
+      label: 'Value',
+      defaultValue: 'hello kintsugi',
+      placeholder: 'Enter input value'
     }
   ];
 

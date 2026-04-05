@@ -1,5 +1,3 @@
-// BaseNode.js
-
 import { useState } from 'react';
 import { Handle } from 'reactflow';
 
@@ -13,8 +11,6 @@ export const BaseNode = ({
   className = '',
   children
 }) => {
-
-  // Initialize field values using defaults or incoming data
   const [fieldValues, setFieldValues] = useState(() => {
     const initial = {};
     fields.forEach(field => {
@@ -29,17 +25,17 @@ export const BaseNode = ({
       ...prev,
       [fieldName]: value
     }));
+    if (data?.onChange) {
+      data.onChange(id, fieldName, value);
+    }
   };
 
   const renderField = (field) => {
     const value = fieldValues[field.name];
-
     if (!field.type) return null;
-
     return (
       <label key={field.name} className="node-field">
         {field.label}
-        
         {field.type === 'select' ? (
           <select
             value={value}
@@ -102,11 +98,9 @@ export const BaseNode = ({
   return (
     <div className={`base-node ${className}`} style={baseStyle}>
       {renderHandles()}
-
       <div className="node-header">
         <strong className="node-title">{nodeType}</strong>
       </div>
-
       <div className="node-content">
         {fields.map(renderField)}
         {children}

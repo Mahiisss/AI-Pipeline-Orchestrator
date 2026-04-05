@@ -1,5 +1,3 @@
-// ui.js
-
 import { useState, useRef, useCallback } from 'react';
 import ReactFlow, { Controls, Background, MiniMap } from 'reactflow';
 import { useStore } from './store';
@@ -59,6 +57,9 @@ export const PipelineUI = () => {
   const getInitNodeData = (nodeID, type) => ({
     id: nodeID,
     nodeType: type,
+    onChange: (nodeId, fieldName, value) => {
+      useStore.getState().updateNodeField(nodeId, fieldName, value);
+    }
   });
 
   const onDrop = useCallback(
