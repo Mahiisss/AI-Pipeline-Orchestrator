@@ -305,8 +305,7 @@ This isn't a tutorial project — it's a ground-up implementation of concepts us
 
 <div align="center">
 
-Built with ⚡ by [Mahi](https://github.com/your-username)
+Built with ⚡ by [Mahi](https://github.com/Mahiisss)
 
-*Found this useful? Drop a ⭐ — it helps a lot!*
 
 </div>
