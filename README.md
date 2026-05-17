@@ -1,352 +1,312 @@
-# AI Workflow Pipeline Builder 🚀
+# 🧠 AI Workflow Pipeline Orchestrator
 
-A full-stack visual workflow automation system that allows users to design, validate, and **execute** pipelines using a node-based interface.
+<div align="center">
 
-Inspired by modern automation tools like **n8n** and **Apache Airflow**, this project focuses on workflow orchestration, execution, reliability, and system design.
+![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)
+![FastAPI](https://img.shields.io/badge/FastAPI-Python-009688?style=for-the-badge&logo=fastapi)
+![React](https://img.shields.io/badge/React-Flow-61DAFB?style=for-the-badge&logo=react)
+![n8n](https://img.shields.io/badge/n8n-Webhook-EA4B71?style=for-the-badge&logo=n8n)
 
----
+**A full-stack visual workflow automation system — design, validate, and execute pipelines using a node-based interface.**
 
-## 🎥 Demo
+Inspired by **n8n** and **Apache Airflow**, built from scratch with a focus on DAG-based execution, reliability, and system design.
 
-▶️ **Project Walkthrough**
-[Watch Demo Video](https://drive.google.com/file/d/1kYPZP2pNhYjL3BfiEaYOjUGBIlDCTQiu/view?usp=drive_link)
+[🎥 Watch Demo](https://drive.google.com/file/d/1yR2eBKbOcjJFWWRYophAGfVax0seq1s9/view?usp=sharing) · [📖 API Docs](http://localhost:8000/docs) · [🚀 Getting Started](#-getting-started)
 
-- Running the application
-- Drag-and-drop node creation
-- Connecting nodes to build pipelines
-- DAG validation results
-- Pipeline execution with live logs
-- n8n webhook integration
+</div>
 
 ---
 
-## 🧠 Overview
+## 📽️ Demo
 
-This system enables users to build workflows by connecting nodes in a visual interface. Each workflow is represented as a **Directed Acyclic Graph (DAG)**, ensuring tasks execute in the correct order without cyclic dependencies.
+> ▶️ [**Watch Full Project Walkthrough**](https://drive.google.com/file/d/1yR2eBKbOcjJFWWRYophAGfVax0seq1s9/view?usp=sharing)
 
-The backend validates workflows and **executes them step-by-step**, supporting two trigger modes — manual UI button and event-driven n8n webhook triggers.
+The demo covers:
+- Drag-and-drop node creation & pipeline design
+- DAG validation with real-time feedback
+- Pipeline execution with live logs per node
+- n8n webhook integration triggering the same execution engine
+
+---
+
+## 🧠 What Is This?
+
+Most workflow tools are black boxes. This project builds one from the ground up.
+
+Users visually connect nodes to form a **Directed Acyclic Graph (DAG)**. The backend validates the graph structure, resolves execution order using **Kahn's Topological Sort**, and runs each node in sequence — passing output data from one node as input to the next.
+
+The result: a fully working mini-Airflow, built with React + FastAPI + n8n.
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-Frontend (React + React Flow + Zustand)
-              ↓
-         Workflow JSON
-              ↓
-       FastAPI Backend
-              ↓
-┌─────────────────────────────────┐
-│  Validation Engine              │
-│  → DAG check (Kahn's Algorithm) │
-└─────────────────────────────────┘
-              ↓
-┌─────────────────────────────────┐
-│  Execution Engine               │
-│  → Runs nodes in topo order     │
-│  → Passes data between nodes    │
-└─────────────────────────────────┘
-              ↓
-┌─────────────────────────────────┐
-│  Trigger System                 │
-│  → Manual UI button             │
-│  → n8n Webhook                  │
-└─────────────────────────────────┘
-              ↓
-┌─────────────────────────────────┐
-│  Logger                         │
-│  → Tracks execution per node    │
-│  → Success / Failure status     │
-└─────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│         Frontend (React + React Flow)     │
+│   Drag-and-drop visual pipeline builder  │
+└────────────────────┬─────────────────────┘
+                     │ Workflow JSON (nodes + edges)
+                     ▼
+┌──────────────────────────────────────────┐
+│           FastAPI Backend                │
+│                                          │
+│  ┌────────────────────────────────────┐  │
+│  │  Validation Engine                 │  │
+│  │  → Kahn's Algorithm (cycle detect) │  │
+│  └────────────────────────────────────┘  │
+│                     ↓                    │
+│  ┌────────────────────────────────────┐  │
+│  │  Execution Engine                  │  │
+│  │  → Topological order execution     │  │
+│  │  → Node-to-node data passing       │  │
+│  └────────────────────────────────────┘  │
+│                     ↓                    │
+│  ┌────────────────────────────────────┐  │
+│  │  Logger                            │  │
+│  │  → Per-node success/failure logs   │  │
+│  └────────────────────────────────────┘  │
+└──────────────────────────────────────────┘
+                     ▲
+         ┌───────────┴───────────┐
+         │                       │
+  Manual UI Trigger        n8n Webhook Trigger
+  (Run Pipeline button)    (HTTP Request node)
 ```
 
 ---
 
-## 🔁 Workflow Lifecycle
+## ⚡ Core Features
 
-```
-1. User designs workflow visually (drag and drop)
-        ↓
-2. Frontend sends workflow JSON to backend
-        ↓
-3. Backend validates DAG structure
-        ↓
-4. Workflow is triggered:
-   → Approach 1: Manual "Run Pipeline" button
-   → Approach 2: n8n Webhook trigger
-        ↓
-5. Execution engine runs nodes in topological order
-        ↓
-6. Logs generated for each node (success / failure)
-```
+### 🎨 Visual Workflow Editor
+- Drag-and-drop nodes onto a canvas
+- Draw connections to define data flow
+- Real-time graph updates powered by **React Flow**
+- One-click **Submit** (validate) and **Run** (execute) buttons
 
----
+### 🧩 8 Custom Node Types
 
-## ⚙️ Core Features
+| Node | What It Does |
+|------|-------------|
+| **Input** | Injects starting data into the pipeline |
+| **Transform** | Mutates text — uppercase, lowercase, reverse |
+| **Math** | Arithmetic — add, subtract, multiply, divide |
+| **API** | Calls any external REST API |
+| **Condition** | Branching logic based on runtime values |
+| **Output** | Captures and returns the final result |
+| **Text** | Dynamic inputs using `{{variable}}` syntax |
+| **Database** | Simulated database read/write operations |
 
-### 🔹 Visual Workflow Editor
-- Drag-and-drop node creation
-- Connect nodes to define dependencies
-- Real-time graph updates using React Flow
-- Submit Pipeline button for DAG validation
-- Run Pipeline button for execution
+All nodes are built on a shared **BaseNode component** — configurable, extensible, zero duplication.
 
----
-
-### 🔹 Reusable Node Architecture
-A reusable **BaseNode component** eliminates duplication across all node implementations.
-
-Each node supports:
-- Configurable input fields
-- Connection handles
-- Dynamic parameters
-- Customizable styling
-
----
-
-### 🔹 Custom Node Types
-
-| Node | Functionality |
-|------|--------------|
-| Input Node | Provides initial data to the pipeline |
-| Transform Node | Modifies data (uppercase, lowercase, reverse) |
-| Math Node | Performs arithmetic (add, subtract, multiply, divide) |
-| API Node | Calls external REST APIs |
-| Condition Node | Branching logic based on values |
-| Output Node | Returns final result |
-| Text Node | Dynamic variable inputs using `{{variable}}` syntax |
-| Database Node | Simulates database operations |
-
----
-
-### 🔹 DAG Validation Engine
+### 🔍 DAG Validation Engine
 - Detects cycles using **Kahn's Topological Sorting Algorithm**
-- Prevents invalid workflows from executing
-- Returns node count, edge count, and DAG status
+- Blocks invalid pipelines before execution
+- Returns node count, edge count, and DAG validity status
 
----
+### 🔥 Pipeline Execution Engine
 
-### 🔹 Pipeline Execution Engine 🔥
+Runs nodes in topological order. Data flows automatically from node to node.
 
-Executes the pipeline node by node in topological order. Data flows from one node to the next automatically.
-
-**Example flow:**
 ```
-Input Node ("Hello World")
+Input("Hello World!")  →  Transform(uppercase)  →  Output("HELLO WORLD!")
+```
+
+Each node has isolated execution logic. A failed node is logged without crashing the rest of the pipeline.
+
+### ⚡ Two Trigger Modes
+
+**Mode 1 — Manual UI**
+```
+User clicks "Run Pipeline"
         ↓
-Transform Node (uppercase → "HELLO WORLD")
+Frontend POSTs workflow JSON
         ↓
-Output Node ("HELLO WORLD", final: true)
+POST /pipelines/execute
+        ↓
+Execution logs rendered live
 ```
 
-Each node type has its own execution logic:
-- **Input** → provides starting data
-- **Transform** → modifies text
-- **Math** → performs calculations
-- **API** → calls external URLs
-- **Condition** → branching logic
-- **Output** → returns final result
-
----
-
-### 🔹 Two Trigger Approaches ⚡
-
-#### Approach 1 — Manual UI Trigger
-- User drags and connects nodes visually
-- Clicks **"Run Pipeline"** button
-- Frontend sends pipeline JSON to `/pipelines/execute`
-- Execution logs shown on screen in real time
-
-#### Approach 2 — n8n Webhook Trigger
-- n8n sends a webhook HTTP request
-- n8n HTTP Request node calls `/pipelines/execute`
-- FastAPI executes the pipeline automatically
-- Execution logs returned to n8n
-
+**Mode 2 — n8n Webhook**
 ```
-n8n Webhook node
+n8n Webhook node (trigger)
         ↓
 n8n HTTP Request node
         ↓
 POST http://127.0.0.1:8000/pipelines/execute
         ↓
-FastAPI executes pipeline
-        ↓
-Execution logs returned to n8n
+Same execution engine — logs returned to n8n
 ```
 
-Both approaches use the **same execution engine** in the backend.
+Both modes share the **exact same backend execution engine** — no duplication.
 
 ---
 
-### 🔹 Execution Logging
-- Tracks execution of each node
-- Captures success/failure status per node
-- Shows output data per node
-- Displayed on frontend in real time
-
-**Example log:**
-```json
-{
-  "node_id": "2",
-  "node_type": "transform",
-  "status": "success",
-  "output": {"output": "HELLO WORLD"},
-  "error": null
-}
-```
-
----
-
-### 🔹 Error Handling
-- Prevents execution of invalid (cyclic) workflows
-- Try-catch on every node execution
-- Failed nodes are logged without crashing the pipeline
-- CORS configured for frontend-backend communication
-
----
-
-## 🔗 API Endpoints
+## 🔗 API Reference
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/` | Health check |
-| POST | `/pipelines/parse` | Validate DAG structure |
-| POST | `/pipelines/execute` | Execute pipeline node by node |
+| `GET` | `/` | Health check |
+| `POST` | `/pipelines/parse` | Validate DAG structure |
+| `POST` | `/pipelines/execute` | Execute pipeline node by node |
 
----
-
-## 🏃 Running the Project
-
-### 1. Run Backend
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate        # Windows
-source venv/bin/activate     # Mac/Linux
-pip install fastapi uvicorn pydantic httpx
-uvicorn main:app --reload
-```
-Backend: `http://localhost:8000`
-API Docs: `http://localhost:8000/docs`
-
----
-
-### 2. Run Frontend
-```bash
-cd frontend
-npm install
-npm start
-```
-Frontend: `http://localhost:3000`
-
----
-
-### 3. Run n8n (for webhook trigger)
-```bash
-n8n start
-```
-n8n: `http://localhost:5678`
-
-In n8n, create a workflow:
-- **Webhook node** → listens for trigger
-- **HTTP Request node** → POST to `http://127.0.0.1:8000/pipelines/execute`
-
----
-
-## 🧪 Example API Request
+### Example Request
 
 ```json
 POST /pipelines/execute
 
 {
   "nodes": [
-    {"id": "1", "type": "input", "position": {"x": 0, "y": 0}, "data": {"value": "Hello World!"}},
-    {"id": "2", "type": "transform", "position": {"x": 200, "y": 0}, "data": {"operation": "uppercase"}},
-    {"id": "3", "type": "output", "position": {"x": 400, "y": 0}, "data": {}}
+    { "id": "1", "type": "input",     "data": { "value": "Hello World!" } },
+    { "id": "2", "type": "transform", "data": { "operation": "uppercase" } },
+    { "id": "3", "type": "output",    "data": {} }
   ],
   "edges": [
-    {"id": "e1", "source": "1", "target": "2"},
-    {"id": "e2", "source": "2", "target": "3"}
+    { "id": "e1", "source": "1", "target": "2" },
+    { "id": "e2", "source": "2", "target": "3" }
   ]
 }
 ```
 
-**Response:**
+### Example Response
+
 ```json
 {
   "status": "completed",
   "num_nodes": 3,
   "num_edges": 2,
   "execution_log": [
-    {"node_id": "1", "node_type": "input", "status": "success", "output": {"output": "Hello World!"}},
-    {"node_id": "2", "node_type": "transform", "status": "success", "output": {"output": "HELLO WORLD!"}},
-    {"node_id": "3", "node_type": "output", "status": "success", "output": {"final": true}}
+    { "node_id": "1", "node_type": "input",     "status": "success", "output": { "output": "Hello World!" } },
+    { "node_id": "2", "node_type": "transform", "status": "success", "output": { "output": "HELLO WORLD!" } },
+    { "node_id": "3", "node_type": "output",    "status": "success", "output": { "final": true } }
   ]
 }
 ```
 
 ---
 
-## 🚀 Tech Stack
+## 🚀 Getting Started
+
+### Prerequisites
+- Python 3.9+
+- Node.js 16+
+- n8n (`npm install -g n8n`)
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/your-username/AI-Pipeline-Orchestrator.git
+cd AI-Pipeline-Orchestrator
+```
+
+### 2. Start the backend
+
+```bash
+cd backend
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+# macOS/Linux
+source venv/bin/activate
+
+pip install fastapi uvicorn pydantic httpx
+uvicorn main:app --reload
+```
+
+| | URL |
+|---|---|
+| 🖥️ Backend | http://localhost:8000 |
+| 📖 API Docs | http://localhost:8000/docs |
+
+### 3. Start the frontend
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+| | URL |
+|---|---|
+| 🌐 Frontend | http://localhost:3000 |
+
+### 4. Start n8n (optional — for webhook trigger)
+
+```bash
+n8n start
+```
+
+| | URL |
+|---|---|
+| ⚙️ n8n Dashboard | http://localhost:5678 |
+
+In n8n, create a workflow:
+1. Add a **Webhook** node → set method to POST
+2. Add an **HTTP Request** node → POST to `http://127.0.0.1:8000/pipelines/execute`
+3. Pass your pipeline JSON as the request body
+
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
-| Technology | Purpose |
-|-----------|---------|
+| Technology | Role |
+|-----------|------|
 | React | UI framework |
-| React Flow | Visual node editor |
+| React Flow | Visual node-graph editor |
 | Zustand | Global state management |
-| JavaScript | Programming language |
 
 ### Backend
-| Technology | Purpose |
-|-----------|---------|
-| Python | Programming language |
+| Technology | Role |
+|-----------|------|
 | FastAPI | REST API framework |
-| Pydantic | Data validation |
-| httpx | Async HTTP client |
+| Pydantic | Request/response validation |
+| httpx | Async HTTP client for API nodes |
+| Uvicorn | ASGI server |
 
-### Automation & Integration
-| Technology | Purpose |
-|-----------|---------|
-| n8n | Webhook trigger + HTTP Request |
+### Automation
+| Technology | Role |
+|-----------|------|
+| n8n | Webhook trigger + HTTP orchestration |
 
 ### Algorithms
-| Algorithm | Purpose |
-|-----------|---------|
-| Directed Acyclic Graph (DAG) | Pipeline structure |
-| Kahn's Topological Sort | Cycle detection + execution order |
-| Dependency Resolution | Node execution ordering |
+| Algorithm | Role |
+|-----------|------|
+| Kahn's Topological Sort | Cycle detection + execution ordering |
+| DAG Traversal | Node dependency resolution |
 
 ---
 
 ## 🧠 What This Project Demonstrates
 
-- Full-stack frontend + backend integration
-- Visual workflow design systems
-- Graph-based pipeline modeling
-- DAG validation using Kahn's Topological Sorting Algorithm
-- Pipeline execution engine with node-to-node data flow
-- Event-driven architecture with webhook triggers
-- n8n integration for external workflow triggering
-- Debugging, logging, and system reliability
-- Scalable and modular UI component architecture
+This isn't a tutorial project — it's a ground-up implementation of concepts used in production automation platforms:
+
+- **Graph theory in practice** — DAG modeling, cycle detection, topological ordering
+- **Execution engine design** — node-to-node data passing, isolated error handling per node
+- **Event-driven architecture** — same engine triggered by both UI and external webhooks
+- **Component architecture** — reusable BaseNode pattern across 8 node types, zero duplication
+- **Full-stack integration** — React ↔ FastAPI ↔ n8n working together end-to-end
+- **System reliability** — per-node logging, graceful failure handling, CORS configuration
 
 ---
 
-## 🔮 Future Improvements
+## 🔮 Roadmap
 
-- Workflow scheduling (cron-style triggers)
-- Retry and failure recovery per node
-- Persistent workflow storage (MongoDB/PostgreSQL)
-- Authentication and user management
-- Real-time monitoring dashboard
-- AI-powered nodes (LLM, embeddings)
-- More n8n node integrations
+- [ ] Workflow scheduling (cron-style triggers)
+- [ ] Retry and failure recovery per node
+- [ ] Persistent storage (MongoDB / PostgreSQL)
+- [ ] Authentication and user workspaces
+- [ ] Real-time monitoring dashboard
+- [ ] AI-powered nodes (LLM, embeddings, vector search)
+- [ ] Expanded n8n node integrations
 
 ---
 
-## 🎯 Why This Project Matters
+<div align="center">
 
-This project demonstrates the core concepts behind modern workflow automation platforms — visual pipeline design, DAG-based execution, webhook triggers, and real-time logging. It shows how complex business processes can be automated reliably and at scale using event-driven architecture.
+Built with ⚡ by [Mahi](https://github.com/your-username)
+
+*Found this useful? Drop a ⭐ — it helps a lot!*
+
+</div>
